@@ -2,9 +2,7 @@ version: "3"
 
 services:
   apisix:
-    build:
-      context: ./..
-      dockerfile: centos/Dockerfile
+    image: registry.cn-shenzhen.aliyuncs.com/maobuji/apisix:1.4.1
     restart: always
     volumes:
       - ./apisix_log:/usr/local/apisix/logs

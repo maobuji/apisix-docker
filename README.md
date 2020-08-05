@@ -9,7 +9,7 @@ $ cd example
 $ docker-compose -p docker-apisix up -d
 ```
 
-You can refer to [the docker-compose example](example/README.md) for more try.
+You can refer to [the docker-compose example](gatewayAll/README.md) for more try.
 
 ## How To Build Image
 
