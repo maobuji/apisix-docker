@@ -1,3 +1,19 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 version: "3"
 
 services:
@@ -14,8 +30,8 @@ services:
       - "9080:9080/tcp"
       - "9443:9443/tcp"
     networks:
-      apisix:
-        ipv4_address: 172.18.5.11
+      apisix-dashboard:
+        ipv4_address: 192.17.5.11
 
   etcd:
     image: bitnami/etcd:3.4.9
@@ -32,8 +48,8 @@ services:
     ports:
       - "2379:2379/tcp"
     networks:
-      apisix:
-        ipv4_address: 172.18.5.10
+      apisix-dashboard:
+        ipv4_address: 192.17.5.10
 
   web1:
     image: ruby:2-alpine
@@ -42,8 +58,8 @@ services:
     ports:
       - "9081:8000/tcp"
     networks:
-      apisix:
-        ipv4_address: 172.18.5.12
+      apisix-dashboard:
+        ipv4_address: 192.17.5.12
 
   web2:
     image: ruby:2-alpine
@@ -52,12 +68,77 @@ services:
     ports:
       - "9082:8000/tcp"
     networks:
-      apisix:
-        ipv4_address: 172.18.5.13
+      apisix-dashboard:
+        ipv4_address: 192.17.5.13
+
+  mysql:
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3309:3306/tcp"
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    volumes:
+      - /tmp/datadir:/var/lib/mysql
+      - /tmp/conf.d:/etc/mysql/conf.d
+      - ../api/script/db:/docker-entrypoint-initdb.d
+    networks:
+      apisix-dashboard:
+        ipv4_address: 192.17.5.14
+
+  manager:
+    build:
+      context: ./../api
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8080:8080/tcp"
+    environment:
+      - ENV=prod
+    volumes:
+      - ./manager_conf/build.sh:/root/manager-api/build.sh
+    networks:
+      apisix-dashboard:
+        ipv4_address: 192.17.5.15
+
+  prometheus:
+    image: prom/prometheus
+    hostname: prometheus
+    restart: always
+    volumes:
+      - ./prometheus_conf/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      apisix-dashboard:
+        ipv4_address: 192.17.5.16
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    hostname: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./grafana_conf/provisioning:/etc/grafana/provisioning"
+      - "./grafana_conf/dashboards:/var/lib/grafana/dashboards"
+      - "./grafana_conf/config/grafana.ini:/etc/grafana/grafana.ini"
+    networks:
+      apisix-dashboard:
+        ipv4_address: 192.17.5.17
+
+  dashboard:
+    build:
+      context: ./..
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "80:80/tcp"
 
 networks:
-  apisix:
+  apisix-dashboard:
     driver: bridge
     ipam:
       config:
-      - subnet: 172.18.0.0/16
+      - subnet: 192.17.0.0/16
