@@ -81,15 +81,13 @@ services:
     volumes:
       - /tmp/datadir:/var/lib/mysql
       - /tmp/conf.d:/etc/mysql/conf.d
-      - ../api/script/db:/docker-entrypoint-initdb.d
+      - ./script/db:/docker-entrypoint-initdb.d
     networks:
       apisix-dashboard:
         ipv4_address: 192.17.5.14
 
   manager:
-    build:
-      context: ./../api
-      dockerfile: Dockerfile
+    image: registry.cn-shenzhen.aliyuncs.com/maobuji/apisix-manager:latest
     restart: always
     ports:
       - "8080:8080/tcp"
@@ -129,9 +127,7 @@ services:
         ipv4_address: 192.17.5.17
 
   dashboard:
-    build:
-      context: ./..
-      dockerfile: Dockerfile
+    image: registry.cn-shenzhen.aliyuncs.com/maobuji/apisix-dashboard:latest
     restart: always
     ports:
       - "80:80/tcp"
