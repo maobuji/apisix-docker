@@ -5,4 +5,4 @@ rm etcd_conf/* -rf
 docker rmi registry.cn-shenzhen.aliyuncs.com/maobuji/apisix:latest
 docker rmi bitnami/etcd:3.4.9
 docker rmi ruby:2-alpine
-docker images
+docker imagesore
