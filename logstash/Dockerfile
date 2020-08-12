@@ -7,3 +7,4 @@ RUN logstash-plugin install logstash-output-jdbc
 RUN logstash-plugin install logstash-output-elasticsearch
 RUN logstash-plugin install logstash-input-elasticsearch
 #--no-verify
+ENTRYPOINT ["whoami"]
