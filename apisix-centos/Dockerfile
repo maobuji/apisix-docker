@@ -1,6 +1,6 @@
 FROM centos:7
 
-ARG APISIX_VERSION=1.4.1
+ARG APISIX_VERSION=1.5
 LABEL apisix_version="${APISIX_VERSION}"
 
 RUN yum -y install yum-utils\
